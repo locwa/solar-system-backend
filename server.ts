@@ -10,7 +10,7 @@ import citizenRouter from './routes/citizenRoutes';
 
 const app = express();
 
-app.use((req, res, next) => {
+app.use((req : any, res : any, next : any) => {
   res.header("Access-Control-Allow-Origin", "https://solar-system-frontend-production.up.railway.app");
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
@@ -31,7 +31,7 @@ app.use(cors({
 app.use(express.json());
 
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'solar-system-secret-key',
+  secret: 'solar-system-secret-key',
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -46,7 +46,7 @@ app.use('/api/auth', authRouter);
 app.use('/api', planetRouter);
 app.use('/api', citizenRouter);
 
-const PORT = process.env.BACKEND_PORT || 3000;
+const PORT = 3000;
 
 sequelize.sync().then(() => {
   console.log("Database synced");
