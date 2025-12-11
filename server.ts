@@ -10,6 +10,19 @@ import citizenRouter from './routes/citizenRoutes';
 
 const app = express();
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "https://solar-system-frontend-production.up.railway.app");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
+
 app.use(cors({
   origin: ['http://localhost:5000', 'http://0.0.0.0:5000', 'https://solar-system-frontend-production.up.railway.app'],
   credentials: true
@@ -22,10 +35,10 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false,
+    secure: true,
     httpOnly: true,
     maxAge: 1000 * 60 * 60 * 24 * 7,
-    sameSite: 'lax'
+    sameSite: 'none'
   }
 }));
 
