@@ -36,9 +36,16 @@ app.use((0, express_session_1.default)({
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }));
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 app.use('/api/auth', authRoutes_1.default);
 app.use('/api', planetRoutes_1.default);
 app.use('/api', citizenRoutes_1.default);
+app.use((err, req, res, next) => {
+    console.error('Unhandled error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+});
 const PORT = Number(process.env.PORT) || 5000;
 database_1.default.sync().then(() => {
     console.log("Database synced");

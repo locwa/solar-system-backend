@@ -37,9 +37,18 @@ app.use(session({
   }
 }));
 
+app.get('/health', (req: Request, res: Response) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 app.use('/api/auth', authRouter);
 app.use('/api', planetRouter);
 app.use('/api', citizenRouter);
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ error: 'Internal server error' });
+});
 
 const PORT = Number(process.env.PORT) || 5000;
 
