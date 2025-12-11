@@ -75,10 +75,9 @@ export const getPlanet = async (req: Request, res: Response) => {
 export const listPlanets = async (req: Request, res: Response) => {
   try {
     const planets = await Planet.findAll();
-    console.log(planets)
     res.json(planets);
-  } catch (error: any) {
-    res.status(500).json({ error: error.message });
+  } catch (error: unknown) {
+    res.status(500).json({ error: (error as Error).message });
   }
 };
 
