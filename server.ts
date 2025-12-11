@@ -11,7 +11,7 @@ import citizenRouter from './routes/citizenRoutes';
 const app = express();
 
 app.use(cors({
-  origin: ['http://localhost:5000', 'http://0.0.0.0:5000'],
+  origin: ['http://localhost:5000', 'http://0.0.0.0:5000', 'https://solar-system-frontend-production.up.railway.app'],
   credentials: true
 }));
 
