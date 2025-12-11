@@ -12,6 +12,9 @@ const app = express();
 
 const allowedOrigins = [
   "https://solar-system-frontend-production.up.railway.app",
+  "https://solar-system-frontend-production-7a99.up.railway.app",
+  "solar-system-frontend-production.up.railway.app",
+  "solar-system-frontend-production-7a99.up.railway.app",
   "http://localhost:5000",
   "http://0.0.0.0:5000"
 ];
