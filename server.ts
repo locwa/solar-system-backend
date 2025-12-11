@@ -10,8 +10,14 @@ import citizenRouter from './routes/citizenRoutes';
 
 const app = express();
 
+const corsOptions = {
+  origin: process.env.FRONTEND_URL || true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+};
 
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
