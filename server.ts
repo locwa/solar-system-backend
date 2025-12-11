@@ -52,9 +52,22 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 const PORT = Number(process.env.PORT) || 5000;
 
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
 sequelize.sync().then(() => {
   console.log("Database synced");
-  app.listen(PORT, '0.0.0.0', () => console.log(`Backend running on port ${PORT}`));
+  const server = app.listen(PORT, () => {
+    console.log(`Backend running on port ${PORT}`);
+  });
+  server.on('error', (err) => {
+    console.error('Server error:', err);
+  });
 }).catch((err: Error) => {
   console.error("Database connection failed:", err.message);
 });
