@@ -13,9 +13,6 @@ const app = express();
 
 app.use(cors());
 
-// Handle all OPTIONS requests (important for Railway)
-app.options("*", cors());
-
 app.use(express.json());
 
 app.use(session({
@@ -34,11 +31,11 @@ app.use('/api/auth', authRouter);
 app.use('/api', planetRouter);
 app.use('/api', citizenRouter);
 
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 5000;
 
 sequelize.sync().then(() => {
   console.log("Database synced");
-  app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
+  app.listen(PORT, '0.0.0.0', () => console.log(`Backend running on port ${PORT}`));
 }).catch((err: Error) => {
   console.error("Database connection failed:", err.message);
 });
