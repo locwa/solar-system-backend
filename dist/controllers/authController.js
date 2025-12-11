@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.register = exports.logout = exports.login = void 0;
+exports.listUsers = exports.register = exports.logout = exports.login = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const User_1 = __importDefault(require("../models/User"));
 // LOGIN WITH REGISTRATION
@@ -74,3 +74,19 @@ const register = async (req, res) => {
     }
 };
 exports.register = register;
+// Get a list of all users (Galactic Leader only)
+const listUsers = async (req, res) => {
+    try {
+        if (res.locals.user.role !== 'Galactic Leader') {
+            return res.status(403).json({ error: 'Unauthorized' });
+        }
+        const users = await User_1.default.findAll({
+            attributes: ['UserID', 'Username', 'FullName', 'Role'], // Only return necessary user info
+        });
+        res.json(users);
+    }
+    catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+exports.listUsers = listUsers;

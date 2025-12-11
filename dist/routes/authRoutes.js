@@ -40,24 +40,26 @@ const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 const auth = __importStar(require("../controllers/authController"));
 const sessionAuth_1 = require("../middleware/sessionAuth");
-router.post('/login', auth.login);
-router.post('/logout', sessionAuth_1.authenticateSession, auth.logout);
+router.post("/login", auth.login);
+router.post("/logout", sessionAuth_1.authenticateSession, auth.logout);
 // Test protected route
-router.get('/me', sessionAuth_1.authenticateSession, (req, res) => {
+router.get("/me", sessionAuth_1.authenticateSession, (req, res) => {
     res.json({ sessionUser: req.session.user });
 });
 // Register
-router.post('/register', auth.register);
+router.post("/register", auth.register);
 // CITIZEN ROUTE
-router.get('/citizen-area', sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(["Citizen"]), (req, res) => {
+router.get("/citizen-area", sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(["Citizen"]), (req, res) => {
     res.json({ message: "Welcome Citizen!" });
 });
 // PLANETARY ROUTE
-router.get('/leader-area', sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(["Planetary Leader"]), (req, res) => {
+router.get("/leader-area", sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(["Planetary Leader"]), (req, res) => {
     res.json({ message: "Welcome Planetary Leader!" });
 });
 // GALACTIC ROUTE
-router.get('/galactic-area', sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(["Galactic Leader"]), (req, res) => {
+router.get("/galactic-area", sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(["Galactic Leader"]), (req, res) => {
     res.json({ message: "Welcome Galactic Leader!" });
 });
+// Get all users (for assigning leaders, etc.)
+router.get("/users", sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(["Galactic Leader"]), auth.listUsers);
 exports.default = router;

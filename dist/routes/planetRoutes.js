@@ -38,12 +38,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const planetController = __importStar(require("../controllers/planetController"));
+const proposalController = __importStar(require("../controllers/proposalController")); // Added import for proposalController
 const sessionAuth_1 = require("../middleware/sessionAuth");
 const router = express_1.default.Router();
-// Planet CRUD routes
+// Galactic Leader Routes
+router.get('/planets', sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(['Galactic Leader']), planetController.listPlanets);
 router.post('/planets', sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(['Galactic Leader']), planetController.createPlanet);
-router.put('/planets/:id', sessionAuth_1.authenticateSession, planetController.updatePlanet // Has internal role validation
+router.get('/planets/:planetId', sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(['Galactic Leader', 'Planetary Leader', 'Citizen']), planetController.getPlanet);
+router.post('/planets/:planetId', sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(['Galactic Leader', 'Planetary Leader']), planetController.updatePlanet // Internal role validation already exists
 );
-router.get('/planets/:id', planetController.getPlanet);
-router.get('/planets', planetController.listPlanets);
+router.delete('/planets/:planetId', sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(['Galactic Leader']), planetController.deletePlanet);
+router.post('/planets/:planetId/leader', sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(['Galactic Leader']), planetController.assignPlanetaryLeader);
+router.get('/planetary-leaders', sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(['Galactic Leader']), planetController.listPlanetaryLeaders);
+// Galactic Leader - Proposal Review Routes
+router.get('/proposals', sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(['Galactic Leader']), proposalController.listAllProposals);
+router.get('/proposals/:proposalId', sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(['Galactic Leader']), proposalController.getProposalById);
+router.post('/proposals/:proposalId/decide', sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(['Galactic Leader']), proposalController.decideProposal);
+// Planetary Leader Routes
+router.get('/planets/:planetId/details', sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(['Planetary Leader']), planetController.getManagedPlanetDetails);
+router.post('/planets/:planetId/modification-requests', sessionAuth_1.authenticateSession, (0, sessionAuth_1.checkRole)(['Planetary Leader']), proposalController.submitModificationRequest);
 exports.default = router;
