@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
 import session from 'express-session';
-import cors from 'cors';
 import sequelize from './config/database';
 import authRouter from './routes/authRoutes';
 import planetRouter from './routes/planetRoutes';
@@ -10,14 +9,26 @@ import citizenRouter from './routes/citizenRoutes';
 
 const app = express();
 
-const corsOptions = {
-  origin: process.env.FRONTEND_URL || true,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-};
+const allowedOrigins = process.env.FRONTEND_URL 
+  ? process.env.FRONTEND_URL.split(',') 
+  : ['https://solar-system-frontend-production.up.railway.app'];
 
-app.use(cors(corsOptions));
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && (allowedOrigins.includes(origin) || allowedOrigins.includes('*'))) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else if (!process.env.FRONTEND_URL) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+  next();
+});
 
 app.use(express.json());
 
