@@ -11,7 +11,7 @@ import citizenRouter from './routes/citizenRoutes';
 const app = express();
 
 
-app.use(cors());
+app.use(cors( ));
 
 // Handle all OPTIONS requests (important for Railway)
 app.options("*", cors());
@@ -25,9 +25,11 @@ app.use(session({
   cookie: {
     secure: process.env.NODE_ENV === "production", // true on Railway
     httpOnly: true,
-    sameSite: "none",
-    maxAge: 1000 * 60 * 60 * 24 * 7
-  }
+    secure: true,      // because Railway uses HTTPS
+    sameSite: "none",  // REQUIRED for cross-site cookies
+    path: "/",         // VERY IMPORTANT!
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+  },
 }));
 
 app.use('/api/auth', authRouter);
