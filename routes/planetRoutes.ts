@@ -8,13 +8,13 @@ const router = express.Router();
 // Galactic Leader Routes
 router.get('/planets',
   authenticateSession,
-  checkRole(['Galactic Leader']),
+  checkRole(['Galactic Leader', 'Planetary Leader', 'Citizen']),
   planetController.listPlanets
 );
 
 router.post('/planets',
   authenticateSession,
-  checkRole(['Galactic Leader', 'Planetary Leader']),
+  checkRole(['Galactic Leader']),
   planetController.createPlanet
 );
 
