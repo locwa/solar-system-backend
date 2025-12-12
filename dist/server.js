@@ -7,25 +7,60 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const express_1 = __importDefault(require("express"));
 const express_session_1 = __importDefault(require("express-session"));
-const database_1 = __importDefault(require("./config/database")); // Corrected import path
+const database_1 = __importDefault(require("./config/database"));
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const planetRoutes_1 = __importDefault(require("./routes/planetRoutes"));
+const citizenRoutes_1 = __importDefault(require("./routes/citizenRoutes"));
 const app = (0, express_1.default)();
+app.use((req, res, next) => {
+    const origin = req.headers.origin || '*';
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    if (req.method === 'OPTIONS') {
+        res.status(204).end();
+        return;
+    }
+    next();
+});
 app.use(express_1.default.json());
-// Enable session middleware
 app.use((0, express_session_1.default)({
-    secret: process.env.SESSION_SECRET || 'your-secret-key',
+    secret: 'solar-system-secret-key',
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false, // set true if HTTPS
-        maxAge: 1000 * 60 * 60 // 1 hour
+        secure: process.env.NODE_ENV === "production", // true on Railway
+        httpOnly: true,
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }));
-// Routes
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 app.use('/api/auth', authRoutes_1.default);
-app.use('/api/planets', planetRoutes_1.default);
+app.use('/api', planetRoutes_1.default);
+app.use('/api', citizenRoutes_1.default);
+app.use((err, req, res, next) => {
+    console.error('Unhandled error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+});
+const PORT = Number(process.env.PORT) || 5000;
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+});
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
 database_1.default.sync().then(() => {
     console.log("Database synced");
-    app.listen(4000, () => console.log("Server running on port 4000"));
+    const server = app.listen(PORT, '0.0.0.0', () => {
+        console.log(`Backend running on http://0.0.0.0:${PORT}`);
+    });
+    server.on('error', (err) => {
+        console.error('Server error:', err);
+    });
+}).catch((err) => {
+    console.error("Database connection failed:", err.message);
 });
