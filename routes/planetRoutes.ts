@@ -14,7 +14,7 @@ router.get('/planets',
 
 router.post('/planets',
   authenticateSession,
-  checkRole(['Galactic Leader']),
+  checkRole(['Galactic Leader', 'Planetary Leader']),
   planetController.createPlanet
 );
 
