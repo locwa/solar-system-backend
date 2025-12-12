@@ -19,8 +19,8 @@ class PlanetaryLeader extends Model<PlanetaryLeaderAttributes, PlanetaryLeaderCr
   public EndDate?: Date | null;
 
   // timestamps!
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+  public readonly createdAt?: Date;
+  public readonly updatedAt?: Date;
 
   // Associations
   public readonly Leader?: User;
